@@ -27,12 +27,15 @@ RUN \
   apk del curl g++ gcc git make && \
   rm -rf /tmp/build/
 
-COPY pak*.pk3 /
-RUN ln -nfs /pak*.pk3 /home/ioq3srv/ioquake3/baseq3/
+RUN wget https://storage.googleapis.com/ioq3-data/ioq3-pak3.tar.bz2 -P / && \
+    tar xvjf /ioq3-pak3.tar.bz2 -C /home/ioq3srv/ioquake3/baseq3/ 
+
+#COPY pak*.pk3 /
+#RUN ln -nfs /pak*.pk3 /home/ioq3srv/ioquake3/baseq3/
 
 COPY *.cfg /
-RUN mkdir -p /home/ioq3srv/.q3a/baseq3/
-RUN ln -nfs /*.cfg  /home/ioq3srv/.q3a/baseq3/
+RUN mkdir -p /home/ioq3srv/.q3a/baseq3/ && \
+    ln -nfs /*.cfg  /home/ioq3srv/.q3a/baseq3/
 
 # Entrypoint
 COPY entrypoint.sh /
