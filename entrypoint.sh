@@ -14,7 +14,7 @@ case $1 in
 server)
 	cd "$Q3DIR"
 #	./ioq3ded.x86_64 +set dedicated 2 +set fs_basepath "$Q3DIR" +set fs_cdpath "$Q3DIR" +set sv_maxclients 16 +set com_hunkmegs 96 +set fs_game excessiveplus +set vm_game 0
-	./ioquake3/ioq3ded.x86_64 +exec server.cfg +exec levels.cfg +exec bots.cfg
+	./ioq3ded.x86_64 +exec server.cfg +exec levels.cfg +exec bots.cfg
     ;;
 sh)
     "/bin/sh" "${@:2}"

@@ -27,8 +27,12 @@ RUN \
   apk del curl g++ gcc git make && \
   rm -rf /tmp/build/
 
-COPY pak0.pk3 /
-RUN ln -s /pak0.pk3 /home/ioq3srv/ioquake3/baseq3/pak0.pk3
+COPY pak*.pk3 /
+RUN ln -nfs /pak*.pk3 /home/ioq3srv/ioquake3/baseq3/
+
+COPY *.cfg /
+RUN mkdir -p /home/ioq3srv/.q3a/baseq3/
+RUN ln -nfs /*.cfg  /home/ioq3srv/.q3a/baseq3/
 
 # Entrypoint
 COPY entrypoint.sh /
