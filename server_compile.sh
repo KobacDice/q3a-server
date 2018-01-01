@@ -7,7 +7,7 @@ export BUILD_SERVER="${BUILD_SERVER:-1}"
 export USE_CURL="${USE_CURL:-1}"
 export USE_CODEC_OPUS="${USE_CODEC_OPUS:-1}"
 export USE_VOIP="${USE_VOIP:-1}"
-export COPYDIR="${COPYDIR:-~/ioquake3}"
+export COPYDIR="${COPYDIR:-/home/ioq3srv/ioquake3}"
 IOQ3REMOTE="${IOQ3REMOTE:-https://github.com/KobacDice/ioq3.git}"
 MAKE_OPTS="${MAKE_OPTS:--j2}"
 
