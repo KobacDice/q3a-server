@@ -1,0 +1,2 @@
+- include: ./circle-aws.yml
+#- include: ./circle-gcp.yml
