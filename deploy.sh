@@ -11,70 +11,66 @@ configure_aws_cli(){
 
 deploy_cluster() {
 
-    family="q3a-server"
+	family="q3a-server-task"
 
-    make_task_def
-    register_definition
-    if [[ $(aws ecs update-service --cluster q3a-server-cluster --service q3a-server-service --task-definition $revision | \
-                   $JQ '.service.taskDefinition') != $revision ]]; then
-        echo "Error updating service."
-        return 1
-    fi
+	make_task_def
+	register_definition
+	if [[ $(aws ecs update-service --cluster q3a-server-cluster --service q3a-server-service --task-definition $revision | \
+		$JQ '.service.taskDefinition') != $revision ]]; then
+		echo "Error updating service."
+		return 1
+	fi
 
-    # wait for older revisions to disappear
-    # not really necessary, but nice for demos
-    for attempt in {1..30}; do
-        if stale=$(aws ecs describe-services --cluster q3a-server-cluster --services q3a-server-service | \
-                       $JQ ".services[0].deployments | .[] | select(.taskDefinition != \"$revision\") | .taskDefinition"); then
-            echo "Waiting for stale deployments:"
-            echo "$stale"
-            sleep 5
-        else
-            echo "Deployed!"
-            return 0
-        fi
-    done
-    echo "Service update took too long."
-    return 1
+	# wait for older revisions to disappear
+	# not really necessary, but nice for demos
+	for attempt in {1..3000}; do
+		if stale=$(aws ecs describe-services --cluster q3a-server-cluster --services q3a-server-service | \
+			$JQ ".services[0].deployments | .[] | select(.taskDefinition != \"$revision\") | .taskDefinition"); then
+			echo "Waiting for stale deployments:"
+			echo "$stale"
+			sleep 5
+		else
+			echo "Deployed!"
+			return 0
+		fi
+	done
+	echo "Service update took too long."
+	return 1
 }
 
 make_task_def(){
 	task_template='[
 		{
 			"name": "q3a-server",
-			"image": "%s.dkr.ecr.ap-northest-1.amazonaws.com/quake3/server:%s",
+			"image": "324996458579.dkr.ecr.ap-northeast-1.amazonaws.com/quake3/server:latest",
 			"essential": true,
 			"memory": 200,
-			"cpu": 3,
+			"cpu": 10,
 			"portMappings": [
 				{
 					"containerPort": 27960,
 					"hostPort": 27960,
-					"protocol": udp
+					"protocol": "udp"
 				}
+			],
+			"command": [
+				"server"
 			]
 		}
 	]'
-	
-	task_def=$(printf "$task_template" $AWS_ACCOUNT_ID $CIRCLE_SHA1)
-}
 
-push_ecr_image(){
-	eval $(aws ecr get-login --region ap-northest-1)
-	docker push $AWS_ACCOUNT_ID.dkr.ecr.ap-northest-1.amazonaws.com/quake3/server:$CIRCLE_SHA1
+	task_def=$(printf "$task_template" $AWS_ACCOUNT_ID $CIRCLE_SHA1)
 }
 
 register_definition() {
 
-    if revision=$(aws ecs register-task-definition --container-definitions "$task_def" --family $family | $JQ '.taskDefinition.taskDefinitionArn'); then
-        echo "Revision: $revision"
-    else
-        echo "Failed to register task definition"
-        return 1
-    fi
-
+	if revision=$(aws ecs register-task-definition --container-definitions "$task_def" --family $family | $JQ '.taskDefinition.taskDefinitionArn'); then
+		echo "Revision: $revision"
+	else
+		echo "Failed to register task definition"
+		return 1
+	fi
 }
 
 configure_aws_cli
-push_ecr_image
 deploy_cluster
