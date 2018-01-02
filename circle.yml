@@ -1,2 +1,1 @@
-- include: ./circle-aws.yml
-#- include: ./circle-gcp.yml
+circle-gcp.yml
