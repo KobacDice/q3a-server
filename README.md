@@ -1,15 +1,21 @@
 # q3a-server
 quake 3 server setup repo
 
-ln -nfs /root/q3a-server/*.cfg ~/.q3a/baseq3/
-
-## Build
+## Docker Build
 
 ```
 docker build -t q3a-server .
 ```
 
-## Run
+## Docker Run
 
 ```
 docker run -it -p 27960:27960/udp q3a-server server
+
+or
+
+docker run -it -d --name q3a-server-runner -p 27960:27960/udp q3a-server:latest server
+```
+
+In order to deploy AWS ECS
+you should create q3a-server-cluster and q3a-server-service
