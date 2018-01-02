@@ -1,0 +1,10 @@
+machine:
+  timezone: Asia/Tokyo
+  services:
+    - docker
+
+deployment:
+  release:
+    tag: /v[0-9]+(\.[0-9]+)*(-[0-9a-zA-Z]+)?/
+    commands:
+      - ./push-gcr.sh
