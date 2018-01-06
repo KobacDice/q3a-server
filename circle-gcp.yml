@@ -9,12 +9,12 @@ dependencies:
     - sudo /opt/google-cloud-sdk/bin/gcloud --quiet components install kubectl
   override:
     - docker info
-    - docker build --rm=false -t q3a-server:latest ./
+    - docker build --rm=false -t q3a-server:${CIRCLE_SHA1} ./
 
 test:
   override:
-    - docker run -it -d --name q3a-server-runner -p 27960:27960/udp q3a-server:latest server
-    - sleep 30
+    - docker run -it -d --name q3a-server-runner -p 27960:27960/udp q3a-server:${CIRCLE_SHA1} server
+    - sleep 5
     - sudo nmap -Pn -sU -p27960 localhost
     - docker stop q3a-server-runner
 
@@ -22,9 +22,9 @@ deployment:
   production:
     branch: master
     commands:
-      - ./push-gcr.sh
+      - ./gke-deploy.sh
 
   release:
     tag: /v[0-9]+(\.[0-9]+)*(-[0-9a-zA-Z]+)?/
     commands:
-      - ./push-gcr.sh
+      - ./gke-deploy.sh
