@@ -18,10 +18,5 @@ sudo /opt/google-cloud-sdk/bin/gcloud --quiet config set container/cluster ${CLU
 sudo /opt/google-cloud-sdk/bin/gcloud config set compute/zone ${CLOUDSDK_COMPUTE_ZONE}
 sudo /opt/google-cloud-sdk/bin/gcloud --quiet container clusters get-credentials ${CLUSTER_NAME}
 
-# Deploy collector
-sbt collector/docker:publishLocal
-sudo /opt/google-cloud-sdk/bin/gcloud docker -- push asia.gcr.io/q3a-server-cluster/collector
-
-# Deploy generator
-sbt generator/docker:publishLocal
-sudo /opt/google-cloud-sdk/bin/gcloud docker -- push asia.gcr.io/q3a-server-cluster/generator
+# Push Registry
+sudo /opt/google-cloud-sdk/bin/gcloud docker -- push asia.gcr.io/q3a-server-registry

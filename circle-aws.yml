@@ -22,18 +22,18 @@ deployment:
     branch: development
     commands:
       - $(aws ecr get-login --region ap-northeast-1)
-      - docker tag q3a-server:latest 324996458579.dkr.ecr.ap-northeast-1.amazonaws.com/quake3/server:latest
-      - docker push 324996458579.dkr.ecr.ap-northeast-1.amazonaws.com/quake3/server:latest
+      - docker tag q3a-server:latest ${AWS_ACCOUNT_ID}.dkr.ecr.ap-northeast-1.amazonaws.com/quake3/server:latest
+      - docker push ${AWS_ACCOUNT_ID}.dkr.ecr.ap-northeast-1.amazonaws.com/quake3/server:latest
   staging:
     branch: staging
     commands:
       - $(aws ecr get-login --region ap-northeast-1)
-      - docker tag q3a-server:latest 324996458579.dkr.ecr.ap-northeast-1.amazonaws.com/quake3/server:latest
-      - docker push 324996458579.dkr.ecr.ap-northeast-1.amazonaws.com/quake3/server:latest
+      - docker tag q3a-server:latest ${AWS_ACCOUNT_ID}.dkr.ecr.ap-northeast-1.amazonaws.com/quake3/server:latest
+      - docker push ${AWS_ACCOUNT_ID}.dkr.ecr.ap-northeast-1.amazonaws.com/quake3/server:latest
   production:
     branch: master
     commands:
       - $(aws ecr get-login --region ap-northeast-1)
-      - docker tag q3a-server:latest 324996458579.dkr.ecr.ap-northeast-1.amazonaws.com/quake3/server:latest
-      - docker push 324996458579.dkr.ecr.ap-northeast-1.amazonaws.com/quake3/server:latest
+      - docker tag q3a-server:latest ${AWS_ACCOUNT_ID}.dkr.ecr.ap-northeast-1.amazonaws.com/quake3/server:latest
+      - docker push ${AWS_ACCOUNT_ID}.dkr.ecr.ap-northeast-1.amazonaws.com/quake3/server:latest
       - ./ecs-deploy.sh

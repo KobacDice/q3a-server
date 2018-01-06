@@ -42,7 +42,7 @@ make_task_def(){
 	task_template='[
 		{
 			"name": "q3a-server",
-			"image": "324996458579.dkr.ecr.ap-northeast-1.amazonaws.com/quake3/server:latest",
+			"image": "${AWS_ACCOUNT_ID}.dkr.ecr.ap-northeast-1.amazonaws.com/quake3/server:latest",
 			"essential": true,
 			"memory": 200,
 			"cpu": 10,

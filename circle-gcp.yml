@@ -3,7 +3,27 @@ machine:
   services:
     - docker
 
+dependencies:
+  pre:
+    - sudo apt-get update; sudo apt-get install jq nmap
+    - sudo /opt/google-cloud-sdk/bin/gcloud --quiet components install kubectl
+  override:
+    - docker info
+    - docker build --rm=false -t q3a-server:latest ./
+
+test:
+  override:
+    - docker run -it -d --name q3a-server-runner -p 27960:27960/udp q3a-server:latest server
+    - sleep 30
+    - sudo nmap -Pn -sU -p27960 localhost
+    - docker stop q3a-server-runner
+
 deployment:
+  production:
+    branch: master
+    commands:
+      - ./push-gcr.sh
+
   release:
     tag: /v[0-9]+(\.[0-9]+)*(-[0-9a-zA-Z]+)?/
     commands:
