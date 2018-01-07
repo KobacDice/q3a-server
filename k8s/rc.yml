@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: q3a-server
+spec:
+  replicas: 3
+  selector:
+    app: q3a-server
+  template:
+    metadata:
+      name: q3a-server
+      labels:
+        app: q3-server
+    spec:
+      containers:
+      - name: q3a-server
+        image: q3a-server
+        ports:
+        - containerPort: 27960

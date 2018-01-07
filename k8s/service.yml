@@ -6,6 +6,7 @@ spec:
   selector:
     app: q3a-server
   type: NodePort
+#  type: LoadBalancer
   ports:
     - protocol: UDP
       port: 27960

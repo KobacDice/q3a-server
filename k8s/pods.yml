@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: q3a-server
+spec:
+  containers:
+    - image: asia.gcr.io/${PROJECT_ID}/q3a-server:${CIRCLE_SHA1}
+      imagePullPolicy: Always
+      name: q3a-server

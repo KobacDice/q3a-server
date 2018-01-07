@@ -1,4 +1,4 @@
-apiVersion: extentions/v1beta1
+apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: q3a-server
@@ -19,3 +19,4 @@ spec:
           image: asia.gcr.io/${PROJECT_ID}/q3a-server:${CIRCLE_SHA1}
           ports:
             - containerPort: 27960
+              protocol: UDP
