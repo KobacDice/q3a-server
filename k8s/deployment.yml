@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: q3a-server
-          image: asia.gcr.io/${PROJECT_ID}/q3a-server:${CIRCLE_SHA1}
+          image: asia.gcr.io${PROJECT_ID}/q3a-server:${CIRCLE_SHA1}
 #          command: ["server", "KUBERNETES_PORT"]
           args: ["server"]
           ports:
