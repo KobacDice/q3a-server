@@ -17,7 +17,8 @@ spec:
       containers:
         - name: q3a-server
           image: asia.gcr.io/${PROJECT_ID}/q3a-server:${CIRCLE_SHA1}
-          command: server
+#          command: ["server", "KUBERNETES_PORT"]
+          args: ["server"]
           ports:
             - containerPort: 27960
               protocol: UDP

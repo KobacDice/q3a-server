@@ -28,7 +28,7 @@ kubectl get pods
 kubectl get deployments
 kubectl get services
 
-#kubectl run q3a-server --image=asia.gcr.io/${PROJECT_ID}/q3a-server:${CIRCLE_SHA1} --port=27960 --command -- "server"
+#kubectl run q3a-server --image=asia.gcr.io/${PROJECT_ID}/q3a-server:${CIRCLE_SHA1}  -- "server" --port=27960
 #kubectl expose deployment q3a-server --port=27960 --target-port=27960 --protocol=UDP --type="LoadBalancer"
 #kubectl set image deployment/q3a-server q3a-server=q3a-server:${CIRCLE_SHA1}
 
