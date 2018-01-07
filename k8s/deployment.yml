@@ -5,7 +5,7 @@ metadata:
   labels:
     app: q3a-server
 spec:
-  replicas: 2
+  replicas: 3
   selector:
     matchLabels:
       app: q3a-server
@@ -17,6 +17,7 @@ spec:
       containers:
         - name: q3a-server
           image: asia.gcr.io/${PROJECT_ID}/q3a-server:${CIRCLE_SHA1}
+          command: server
           ports:
             - containerPort: 27960
               protocol: UDP

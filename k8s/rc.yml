@@ -10,10 +10,11 @@ spec:
     metadata:
       name: q3a-server
       labels:
-        app: q3-server
+        app: q3a-server
     spec:
       containers:
-      - name: q3a-server
-        image: q3a-server
-        ports:
-        - containerPort: 27960
+        - name: q3a-server
+          image: asia.gcr.io/${PROJECT_ID}/q3a-server:${CIRCLE_SHA1}
+          ports:
+            - containerPort: 27960
+              protocol: UDP
