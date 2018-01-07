@@ -3,7 +3,6 @@
 # Exit on any error
 set -e
 
-PROJECT_ID="work-164802"
 CLUSTER_NAME="q3a-server-cluster"
 CLOUDSDK_COMPUTE_ZONE="asia-northeast1-a"
 DEBIAN_FRONTEND="noninteractive"
