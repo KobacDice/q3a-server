@@ -1,0 +1,21 @@
+apiVersion: extentions/v1beta1
+kind: Deployment
+metadata:
+  name: q3a-server
+  labels:
+    app: q3a-server
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: q3a-server
+  template:
+    metadata:
+      labels:
+        app: q3a-server
+    spec:
+      containers:
+        - name: q3a-server
+          image: asia.gcr.io/${PROJECT_ID}/q3a-server:${CIRCLE_SHA1}
+          ports:
+            - containerPort: 27960

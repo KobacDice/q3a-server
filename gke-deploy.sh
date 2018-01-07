@@ -23,17 +23,26 @@ docker tag q3a-server:${CIRCLE_SHA1} asia.gcr.io/${PROJECT_ID}/q3a-server:${CIRC
 sudo /opt/google-cloud-sdk/bin/gcloud docker -- push asia.gcr.io/${PROJECT_ID}/q3a-server:${CIRCLE_SHA1}
 sudo chown -R ubuntu:ubuntu /home/ubuntu/.kube
 
+kubectl get rc
+kubectl get pods
+kubectl get deployments
 kubectl get services
-#kubectl set image deployment/q3a-server q3a-server=q3a-server:${CIRCLE_SHA1}
-kubectl run q3a-server --image=asia.gcr.io/${PROJECT_ID}/q3a-server:${CIRCLE_SHA1} --expose=true --port=27960 --command -- "server"
+
+kubectl run q3a-server --image=asia.gcr.io/${PROJECT_ID}/q3a-server:${CIRCLE_SHA1} --port=27960 --command -- "server"
 kubectl expose deployment q3a-server --port=27960 --target-port=27960 --protocol=UDP --type="LoadBalancer"
 
-kubectl get deployments
+#kubectl set image deployment/q3a-server q3a-server=q3a-server:${CIRCLE_SHA1}
+
+#for f in k8s/*.yml
+#do
+#    envsubst < $f > "generated-$(basename $f)"
+#done
+#kubectl apply -f generated-deployment.yml --record
+#kubectl apply -f generated-service.yml
+
+kubectl get rc
 kubectl get pods
-sleep 10
+kubectl get deployments
 kubectl get services
-kubectl get rs
-kubectl get pods --show-labels
-kubectl rollout status deployment/q3a-server
 
 return 0
