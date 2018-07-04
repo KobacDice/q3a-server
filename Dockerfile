@@ -12,9 +12,6 @@ RUN \
   echo "y" | su ioq3srv -c "sh /server_compile.sh" && \
   apk del curl g++ gcc git make
 
-#RUN wget https://storage.googleapis.com/ioq3-data/ioq3-pak3.tar.bz2 -P / && \
-#    tar xvjf /ioq3-pak3.tar.bz2 -C /home/ioq3srv/ioquake3/baseq3/
-
 RUN wget https://s3-ap-northeast-1.amazonaws.com/ioq3-data/ioq3-pak3.tar.bz2 -P / && \
     tar xvjf /ioq3-pak3.tar.bz2 -C /home/ioq3srv/ioquake3/baseq3/
 
