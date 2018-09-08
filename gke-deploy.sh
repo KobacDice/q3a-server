@@ -18,18 +18,11 @@ sudo /opt/google-cloud-sdk/bin/gcloud config set compute/zone ${CLOUDSDK_COMPUTE
 sudo /opt/google-cloud-sdk/bin/gcloud --quiet container clusters get-credentials ${CLUSTER_NAME}
 
 # Push Registry
-docker tag q3a-server:${CIRCLE_SHA1} asia.gcr.io/${PROJECT_ID}/q3a-server:${CIRCLE_SHA1}
+docker tag q3a-server:latest asia.gcr.io/${PROJECT_ID}/q3a-server:${CIRCLE_SHA1}
 sudo /opt/google-cloud-sdk/bin/gcloud docker -- push asia.gcr.io/${PROJECT_ID}/q3a-server:${CIRCLE_SHA1}
-sudo chown -R ubuntu:ubuntu /home/ubuntu/.kube
-
-kubectl get rc
-kubectl get pods
-kubectl get deployments
-kubectl get services
-
-#kubectl run q3a-server --image=asia.gcr.io/${PROJECT_ID}/q3a-server:${CIRCLE_SHA1}  -- "server" --port=27960
-#kubectl expose deployment q3a-server --port=27960 --target-port=27960 --protocol=UDP --type="LoadBalancer"
-#kubectl set image deployment/q3a-server q3a-server=q3a-server:${CIRCLE_SHA1}
+sudo chown -R circleci:circleci /home/circleci/.kube
+sudo chown -R circleci:circleci /home/circleci/.config
+sudo chown -R circleci:circleci /home/circleci/.*
 
 for f in k8s/*.yml
 do
@@ -38,7 +31,11 @@ done
 kubectl apply -f generated-deployment.yml
 kubectl apply -f generated-service.yml
 
-kubectl get rc
-kubectl get pods
-kubectl get deployments
-kubectl get services
+for attempt in {1..30}; do
+	kubectl get rc
+	kubectl get pods
+	kubectl get deployments
+	kubectl get services
+	sleep 3
+	echo '================================================'
+done

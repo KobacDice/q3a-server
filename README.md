@@ -19,12 +19,14 @@ docker run -it -d --name q3a-server-runner -p 27960:27960/udp q3a-server:latest 
 
 ## docker push to aws ecs
 ```
-ln -nfs circle-aws.yml circle.yml
+ln -nfs ../circle-aws.yml .circleci/config.yml
 ```
-In order to deploy AWS ECS
-you should create q3a-server-cluster and q3a-server-service
+In order to deploy AWS ECR ECS  
+you must create q3a-server-cluster and q3a-server-service
 
-## docker push to gcp gcr
+## docker push to gcp GCR GKE  
+In order to deploy GKE  
+you must create q3a-server-cluster
 ```
-ln -nfs circle-gcp.yml circle.yml
+ln -nfs ../circle-gcp.yml .circleci/config.yml
 ```

@@ -1,39 +1,81 @@
-machine:
-  timezone: Asia/Tokyo
-  services:
-    - docker
+version: 2
+jobs:
+  build:
+    machine: true
+    steps:
+      - checkout
+      - restore_cache:
+          key: docker-{{ checksum ".circleci/config.yml" }}-{{ checksum "Dockerfile" }}
+          paths: ~/caches/images.tar
+      - run:
+          name: Check cache file, if not exists then pull images and generate cache.
+          command: |
+            if [ ! -f ~/caches/images.tar ]; then
+              sudo apt-get update; sudo apt-get install jq nmap
+              docker build --rm=false -t q3a-server:latest ./
+              mkdir -p ~/caches
+              docker save $(docker images | awk 'NR>=2 && ! /^<none>/{print $1}') -o ~/caches/images.tar
+            fi
+      - save_cache:
+          key: docker-{{ checksum ".circleci/config.yml" }}-{{ checksum "Dockerfile" }}
+          paths: ~/caches/images.tar
 
-dependencies:
-  pre:
-    - sudo apt-get update; sudo apt-get install jq nmap
-  override:
-    - docker info
-    - docker build --rm=false -t q3a-server:latest ./
+  test:
+    machine: true
+    steps:
+      - checkout
+      - restore_cache:
+          key: docker-{{ checksum ".circleci/config.yml" }}-{{ checksum "Dockerfile" }}
+          paths: ~/caches/images.tar
+      - run:
+          name: Load Docker images
+          command: docker load -i ~/caches/images.tar
+      - run: docker run -it -d --name q3a-server-runner -p 27960:27960/udp q3a-server:latest server
+      - run: sleep 7
+      - run: sudo apt-get update; sudo apt-get install jq nmap
+      - run: sudo nmap -Pn -sU -p27960 localhost
+      - run: docker stop q3a-server-runner
+      - store_test_results:
+          path: test_results
 
-test:
-  override:
-    - docker run -it -d --name q3a-server-runner -p 27960:27960/udp q3a-server:latest server
-    - sleep 30
-    - sudo nmap -Pn -sU -p27960 localhost
-    - docker stop q3a-server-runner
+  deploy:
+    machine: true
+    steps:
+      - checkout
+      - restore_cache:
+          key: docker-{{ checksum ".circleci/config.yml" }}-{{ checksum "Dockerfile" }}
+          paths: ~/caches/images.tar
+      - run: sudo apt-get update; sudo apt-get install jq nmap
+      - run:
+          name: Load Docker images
+          command: docker load -i ~/caches/images.tar
+      - run:
+          name: Deploy
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              $(aws ecr get-login --region ap-northeast-1 --no-include-email)
+              docker tag q3a-server:latest ${AWS_ACCOUNT_ID}.dkr.ecr.ap-northeast-1.amazonaws.com/quake3/server:latest
+              docker push ${AWS_ACCOUNT_ID}.dkr.ecr.ap-northeast-1.amazonaws.com/quake3/server:latest
+              ./ecs-deploy.sh
+            else
+              $(aws ecr get-login --region ap-northeast-1 --no-include-email)
+              docker tag q3a-server:latest ${AWS_ACCOUNT_ID}.dkr.ecr.ap-northeast-1.amazonaws.com/quake3/server:latest
+              docker push ${AWS_ACCOUNT_ID}.dkr.ecr.ap-northeast-1.amazonaws.com/quake3/server:latest
+            fi
 
-deployment:
-  development:
-    branch: development
-    commands:
-      - $(aws ecr get-login --region ap-northeast-1)
-      - docker tag q3a-server:latest ${AWS_ACCOUNT_ID}.dkr.ecr.ap-northeast-1.amazonaws.com/quake3/server:latest
-      - docker push ${AWS_ACCOUNT_ID}.dkr.ecr.ap-northeast-1.amazonaws.com/quake3/server:latest
-  staging:
-    branch: staging
-    commands:
-      - $(aws ecr get-login --region ap-northeast-1)
-      - docker tag q3a-server:latest ${AWS_ACCOUNT_ID}.dkr.ecr.ap-northeast-1.amazonaws.com/quake3/server:latest
-      - docker push ${AWS_ACCOUNT_ID}.dkr.ecr.ap-northeast-1.amazonaws.com/quake3/server:latest
-  production:
-    branch: master
-    commands:
-      - $(aws ecr get-login --region ap-northeast-1)
-      - docker tag q3a-server:latest ${AWS_ACCOUNT_ID}.dkr.ecr.ap-northeast-1.amazonaws.com/quake3/server:latest
-      - docker push ${AWS_ACCOUNT_ID}.dkr.ecr.ap-northeast-1.amazonaws.com/quake3/server:latest
-      - ./ecs-deploy.sh
+workflows:
+  version: 2
+  build-test-deploy:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
+      - deploy:
+          requires:
+            - test
+          filters:
+            branches:
+              only:
+                - develop
+                - master

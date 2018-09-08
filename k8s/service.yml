@@ -5,10 +5,10 @@ metadata:
 spec:
   selector:
     app: q3a-server
-#  type: NodePort
-  type: LoadBalancer
+  type: NodePort
   ports:
     - protocol: UDP
       port: 27960
       targetPort: 27960
+      nodePort: 30010
       name: quake3
