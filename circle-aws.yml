@@ -1,5 +1,18 @@
 version: 2
 jobs:
+  createcluster:
+    docker:
+      - image: tnamao/circleci-awscli:20180411
+    steps:
+      - checkout
+      - run: sudo pip install --upgrade awscli
+      - run: aws --version
+      - run: sudo curl -o /usr/local/bin/jq -L https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 && sudo chmod +x /usr/local/bin/jq
+      - run: sudo chown -R circleci:circleci /home/circleci/.*
+      - run:
+          name: Create Cluster
+          command: |
+            ./create-ecs-cluster.sh
   build:
     machine: true
     steps:
@@ -30,9 +43,9 @@ jobs:
       - run:
           name: Load Docker images
           command: docker load -i ~/caches/images.tar
+      - run: sudo apt-get update; sudo apt-get install jq nmap
       - run: docker run -it -d --name q3a-server-runner -p 27960:27960/udp q3a-server:latest server
       - run: sleep 7
-      - run: sudo apt-get update; sudo apt-get install jq nmap
       - run: sudo nmap -Pn -sU -p27960 localhost
       - run: docker stop q3a-server-runner
       - store_test_results:
@@ -65,9 +78,12 @@ jobs:
 
 workflows:
   version: 2
-  build-test-deploy:
+  createcluster-build-deploy:
     jobs:
-      - build
+      - createcluster
+      - build:
+          requires:
+            - createcluster
       - test:
           requires:
             - build
