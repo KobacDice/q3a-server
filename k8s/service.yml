@@ -10,5 +10,5 @@ spec:
     - protocol: UDP
       port: 27960
       targetPort: 27960
-      nodePort: 27960
+      nodePort: 30010
       name: quake3
