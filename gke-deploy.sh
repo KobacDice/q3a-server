@@ -39,6 +39,7 @@ kubectl apply -f generated-service.yml
 
 for attempt in {1..30}; do
 #	kubectl get rc
+	kubectl get nodes
 	kubectl get pods
 	kubectl get deployments
 	kubectl get services
