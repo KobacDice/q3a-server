@@ -1,0 +1,14 @@
+version: '3.7'
+
+services:
+  ioquake3-server:
+    build:
+      context: ./ioquake3-server/
+      dockerfile: ./Dockerfile
+    container_name:
+      q3a-server
+    tty: true
+    stdin_open: true
+    ports:
+      - "27960:27960/udp"
+    entrypoint: "/entrypoint.sh server"
