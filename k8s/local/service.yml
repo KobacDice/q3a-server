@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: q3a-server
+spec:
+  selector:
+    app: q3a-server
+  type: NodePort
+  ports:
+    - protocol: UDP
+      port: 27960
+      targetPort: 27960
+      nodePort: 30010
+      name: quake3

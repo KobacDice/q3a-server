@@ -1,0 +1,19 @@
+apiVersion: skaffold/v1
+kind: Config
+build:
+  artifacts:
+  - image: q3a-server
+    context: app/
+    docker:
+      dockerfile: ./app/Dockerfile
+  tagPolicy:
+    dateTime:
+      format: "20060102_150405"
+      timezone: "Local"
+  local:
+    push: false
+    useBuildkit: true
+deploy:
+  kubectl:
+    manifests:
+    - ./k8s/local/*

@@ -3,7 +3,7 @@ version: '3.7'
 services:
   ioquake3-server:
     build:
-      context: ./ioquake3-server/
+      context: ./app/
       dockerfile: ./Dockerfile
     container_name:
       q3a-server

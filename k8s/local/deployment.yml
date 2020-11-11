@@ -1,0 +1,24 @@
+#apiVersion: extensions/v1beta1
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: q3a-server
+  labels:
+    app: q3a-server
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: q3a-server
+  template:
+    metadata:
+      labels:
+        app: q3a-server
+    spec:
+      containers:
+        - name: q3a-server
+          image: q3a-server:latest
+          args: ["server"]
+          ports:
+            - containerPort: 27960
+              protocol: UDP
